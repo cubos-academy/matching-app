@@ -1,0 +1,32 @@
+{
+  "name": "matching-app",
+  "version": "0.1.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node -r dotenv/config server.js",
+    "migrate": "DATABASE_URL=postgres://postgres:mypw@localhost/postgres node-pg-migrate"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cubos-academy/matching-app.git"
+  },
+  "keywords": [],
+  "author": "Nícolas 'eowfenth' Deçordi",
+  "license": "GPL-3",
+  "bugs": {
+    "url": "https://github.com/cubos-academy/matching-app/issues"
+  },
+  "homepage": "https://github.com/cubos-academy/matching-app#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "pg": "^8.0.3"
+  },
+  "devDependencies": {
+    "node-pg-migrate": "^4.6.2"
+  }
+}
