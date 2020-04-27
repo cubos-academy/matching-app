@@ -27,6 +27,6 @@ exports.up = (pgm) => {
 };
 
 exports.down = (pgm) => {
-  pgm.dropExtension("uuid-ossp");
   pgm.dropTable("users");
+  pgm.dropExtension("uuid-ossp");
 };
