@@ -1,6 +1,5 @@
 const express = require("express");
 const routes = require("./src/routes");
-require("dotenv");
 
 const server = express();
 
