@@ -22,12 +22,14 @@ routes.get(
   checkAccountStatus,
   User.getUserProfile
 );
+
 routes.get(
   "/users/:id",
   checkAuthorization,
   checkAccountStatus,
   User.getProfile
 );
+
 routes.post("/users/", encryptPassword, User.create);
 routes.put(
   "/users/me",
