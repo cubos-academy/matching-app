@@ -23,7 +23,7 @@ exports.up = (pgm) => {
     deleted_at: { type: "TIMESTAMP", default: null },
     created_at: { type: "TIMESTAMP", default: pgm.func("NOW()") },
     updated_at: { type: "TIMESTAMP", default: pgm.func("NOW()") },
-  });
+  }, { ifNotExists: true });
 };
 
 exports.down = (pgm) => {
