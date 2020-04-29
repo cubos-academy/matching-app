@@ -48,7 +48,7 @@ routes.put(
 );
 
 routes.post(
-  "/users/upload", checkAuthorization, fileUpload.single('file'), User.upload
+  "/users/upload", checkAuthorization, fileUpload, User.upload
 );
 
 module.exports = routes;
