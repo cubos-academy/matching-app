@@ -14,11 +14,11 @@ const encryptPassword = async (req, res, next) => {
 };
 
 const checkAccountStatus = async (req, res, next) => {
-  const { auth_user_id } = req.body;
+  const { auth_user_id } = req;
 
   const user = await User.getOne(auth_user_id);
 
-  if (user.deleted_at) {
+  if (user && user.deleted_at) {
     return res.json({
       error: 403,
       data: {
