@@ -49,7 +49,11 @@ const DiskStorage = {
     fileFilter: fileCheck,
 };
 
-const Uploader = multer(process.env.UPLOAD_STORAGE === "diskstorage" ? DiskStorage : S3Storage).single('file');
+const Uploader = multer(
+    process.env.UPLOAD_STORAGE === "diskstorage" ? 
+    DiskStorage : 
+    S3Storage
+).single('file');
 
 const fileUpload = (req, res, next) => {
     Uploader(req, res, (err) => {
