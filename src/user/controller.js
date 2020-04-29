@@ -169,4 +169,21 @@ const disable = async (req, res) => {
   });
 };
 
-module.exports = { create, getUserProfile, getProfile, update, disable };
+const upload = async (req, res) => {
+  const { file, auth_user_id: user_id } = req;
+  
+  const picture = await User.upload({ url: file.filename, user_id });
+
+  if (!picture || picture.error) {
+    return res.json(picture);
+  }
+
+  return res.json({
+    error: null,
+    data: {
+      url: picture.url,
+    },
+  });
+};
+
+module.exports = { create, getUserProfile, getProfile, update, disable, upload };
