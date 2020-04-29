@@ -15,7 +15,7 @@ const checkAuthorization = async (req, res, next) => {
   const [bearer, token] = authorization.split(" ");
   try {
     const verification = await jwt.verify(token, process.env.JWT_SECRET);
-    req.body.auth_user_id = verification.id;
+    req.auth_user_id = verification.id;
   } catch (err) {
     res.status(401).json({
       error: 401,
