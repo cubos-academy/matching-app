@@ -13,21 +13,24 @@ const fileCheck = (req, file, next) => {
 };
 
 const s3 = new AWS.S3({
-    accessKeyId: "",
-    secretAccessKey: "",
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_SECRET_KEY,
 });
 
-const s3fileUpload = multer({
+const S3Storage = {
     storage: multerS3({
         s3: s3,
         acl: 'public-read',
-        bucket: 'bucket-name',
+        bucket: 'matching-app-bucket',
         metadata: (req, file, cb) => { cb(null, { fieldName: file.fieldname })},
-        key: (req, file, cb) => { cb(null, Date.now().toString() + '-' + file.originalName) },
+        key: (req, file, cb) => { 
+            const uniquePrefix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+            const fileExtension = path.extname(file.originalname);
+            cb(null, uniquePrefix + fileExtension) },
     }),
-    limits: { fileSize: 5*1024*1024 }, // 5mb
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5mb
     fileFilter: fileCheck,
-});
+};
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -40,11 +43,13 @@ const storage = multer.diskStorage({
     },
 });
 
-const Uploader = multer({
+const DiskStorage = {
     storage,
-    limits: { fileSize: 5*1024*1024 },
+    limits: { fileSize: 5 * 1024 * 1024 },
     fileFilter: fileCheck,
-}).single('file');
+};
+
+const Uploader = multer(process.env.UPLOAD_STORAGE === "diskstorage" ? DiskStorage : S3Storage).single('file');
 
 const fileUpload = (req, res, next) => {
     Uploader(req, res, (err) => {
