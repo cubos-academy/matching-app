@@ -76,9 +76,9 @@ const getProfile = async (req, res) => {
     });
   }
 
-  const { id: user_id = null, name = null } = await User.getOne(id);
+  const user = await User.getOne(id);
 
-  if (!user_id || !name) {
+  if (!user) {
     return res.status(404).json({
       error: 404,
       data: {
@@ -89,10 +89,7 @@ const getProfile = async (req, res) => {
 
   return res.json({
     error: null,
-    data: {
-      id: user_id,
-      name: name,
-    },
+    data: user,
   });
 };
 
