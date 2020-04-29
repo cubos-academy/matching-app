@@ -27,6 +27,6 @@ exports.up = (pgm) => {
 };
 
 exports.down = (pgm) => {
-  pgm.dropTable("users");
-  pgm.dropExtension("uuid-ossp");
+  pgm.dropTable("users", { ifExists: true, cascade: true });
+  pgm.dropExtension("uuid-ossp", { ifExists: true });
 };
