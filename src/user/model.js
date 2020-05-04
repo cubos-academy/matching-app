@@ -106,4 +106,18 @@ const disable = async (id) => {
     return DEFAULT_ERR_RESPONSE;
   }
 };
-module.exports = { store, getOne, getOneByEmail, getAll, disable, update };
+
+const upload = async ({ user_id, url }) => {
+  try {
+    const {
+      rows,
+    } = await Pool.query(
+      "INSERT INTO users_pictures (user_id, url) VALUES ($1, $2) RETURNING url;", [user_id, url]
+    );
+
+    return rows.shift();
+  } catch (err) {
+    return DEFAULT_ERR_RESPONSE;
+  }
+}
+module.exports = { store, getOne, getOneByEmail, getAll, disable, update, upload };

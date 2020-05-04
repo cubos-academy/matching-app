@@ -1,4 +1,5 @@
 const { Router } = require("express");
+const { fileUpload } = require("./utils/upload");
 
 const User = require("./user/controller");
 const { checkAccountStatus, encryptPassword } = require("./user/middleware");
@@ -44,6 +45,10 @@ routes.put(
   checkAuthorization,
   checkAccountStatus,
   User.disable
+);
+
+routes.post(
+  "/users/upload", checkAuthorization, fileUpload, User.upload
 );
 
 module.exports = routes;

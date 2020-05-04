@@ -39,7 +39,7 @@ const create = async (req, res) => {
 };
 
 const getUserProfile = async (req, res) => {
-  const { auth_user_id } = req.body;
+  const { auth_user_id } = req;
 
   const {
     password_hash,
@@ -76,9 +76,9 @@ const getProfile = async (req, res) => {
     });
   }
 
-  const { id: user_id = null, name = null } = await User.getOne(id);
+  const user = await User.getOne(id);
 
-  if (!user_id || !name) {
+  if (!user) {
     return res.status(404).json({
       error: 404,
       data: {
@@ -89,23 +89,19 @@ const getProfile = async (req, res) => {
 
   return res.json({
     error: null,
-    data: {
-      id: user_id,
-      name: name,
-    },
+    data: user,
   });
 };
 
 const update = async (req, res) => {
-  const {
-    auth_user_id,
+  const { auth_user_id, body: {
     email = null,
     username = null,
     phone = null,
     name = null,
     password_hash = null,
-  } = req.body;
-
+  }} = req;
+  
   const user = await User.getOne(auth_user_id);
 
   if (email) {
@@ -147,7 +143,7 @@ const update = async (req, res) => {
 const confirm = async () => {};
 
 const disable = async (req, res) => {
-  const { auth_user_id = null } = req.body;
+  const { auth_user_id = null } = req;
 
   const { deleted_at } = await User.getOne(auth_user_id);
 
@@ -160,14 +156,31 @@ const disable = async (req, res) => {
     });
   }
 
-  const resp = await User.disable(auth_user_id);
+  await User.disable(auth_user_id);
 
   return res.json({
-    error: 200,
+    error: null,
     data: {
       message: "Your user account is now disabled.",
     },
   });
 };
 
-module.exports = { create, getUserProfile, getProfile, update, disable };
+const upload = async (req, res) => {
+  const { file, auth_user_id: user_id } = req;
+  
+  const picture = await User.upload({ url: file.filename, user_id });
+
+  if (!picture || picture.error) {
+    return res.json(picture);
+  }
+
+  return res.json({
+    error: null,
+    data: {
+      url: picture.url,
+    },
+  });
+};
+
+module.exports = { create, getUserProfile, getProfile, update, disable, upload };
