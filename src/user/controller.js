@@ -167,9 +167,9 @@ const disable = async (req, res) => {
 };
 
 const upload = async (req, res) => {
-  const { file, auth_user_id: user_id } = req;
+  const { file = null, auth_user_id: user_id } = req;
   
-  const picture = await User.upload({ url: file.filename, user_id });
+  const picture = await User.upload({ url: process.env.UPLOAD_STORAGE === "diskstorage" ? file.filename : file.location, user_id });
 
   if (!picture || picture.error) {
     return res.json(picture);
