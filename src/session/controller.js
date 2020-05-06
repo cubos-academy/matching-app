@@ -1,10 +1,8 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const User = require("../user/model");
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const User = require('../user/model');
 
-const comparePassword = async (string, password) => {
-  return bcrypt.compare(string, password);
-};
+const comparePassword = async (string, password) => bcrypt.compare(string, password);
 
 const auth = async (req, res) => {
   const { email, password } = req.body;
@@ -12,7 +10,7 @@ const auth = async (req, res) => {
   if (!email || !password) {
     return res.status(400).json({
       error: 400,
-      message: "Bad Format",
+      message: 'Bad Format',
     });
   }
 
@@ -21,7 +19,7 @@ const auth = async (req, res) => {
   if (user) {
     const doesPasswordMatch = await comparePassword(
       password,
-      user.password_hash
+      user.password_hash,
     );
 
     if (doesPasswordMatch) {
@@ -38,9 +36,9 @@ const auth = async (req, res) => {
     }
   }
 
-  return res.status(403 ).json({
+  return res.status(403).json({
     error: 403,
-    message: "Forbidden",
+    message: 'Forbidden',
   });
 };
 

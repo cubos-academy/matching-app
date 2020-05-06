@@ -1,5 +1,5 @@
-const bcrypt = require("bcryptjs");
-const User = require("./model");
+const bcrypt = require('bcryptjs');
+const User = require('./model');
 
 const encryptPassword = async (req, res, next) => {
   const { password = null } = req.body;
@@ -29,7 +29,7 @@ const checkAccountStatus = async (req, res, next) => {
     return res.json({
       error: 403,
       data: {
-        message: "Your user account is disabled",
+        message: 'Your user account is disabled',
       },
     });
   }

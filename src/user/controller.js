@@ -1,4 +1,4 @@
-const User = require("./model");
+const User = require('./model');
 
 const create = async (req, res) => {
   const {
@@ -13,7 +13,7 @@ const create = async (req, res) => {
     return res.status(400).json({
       error: 400,
       data: {
-        message: "Bad Format",
+        message: 'Bad Format',
       },
     });
   }
@@ -53,7 +53,7 @@ const getUserProfile = async (req, res) => {
     return res.status(404).json({
       error: 404,
       data: {
-        message: "Not Found",
+        message: 'Not Found',
       },
     });
   }
@@ -71,7 +71,7 @@ const getProfile = async (req, res) => {
     return res.status(400).json({
       error: 400,
       data: {
-        message: "Bad Format",
+        message: 'Bad Format',
       },
     });
   }
@@ -82,7 +82,7 @@ const getProfile = async (req, res) => {
     return res.status(404).json({
       error: 404,
       data: {
-        message: "Not Found",
+        message: 'Not Found',
       },
     });
   }
@@ -94,14 +94,16 @@ const getProfile = async (req, res) => {
 };
 
 const update = async (req, res) => {
-  const { auth_user_id, body: {
-    email = null,
-    username = null,
-    phone = null,
-    name = null,
-    password_hash = null,
-  }} = req;
-  
+  const {
+    auth_user_id, body: {
+      email = null,
+      username = null,
+      phone = null,
+      name = null,
+      password_hash = null,
+    },
+  } = req;
+
   const user = await User.getOne(auth_user_id);
 
   if (email) {
@@ -111,22 +113,22 @@ const update = async (req, res) => {
       return res.json({
         error: 409,
         data: {
-          message: "There is already an user with this email",
+          message: 'There is already an user with this email',
         },
       });
     }
   }
   const data = {
     id: auth_user_id,
-    email: email ? email : user.email,
-    username: username ? username : user.username,
-    phone: phone ? phone : user.phone,
-    name: name ? name : user.name,
+    email: email || user.email,
+    username: username || user.username,
+    phone: phone || user.phone,
+    name: name || user.name,
   };
 
   const { deleted_at, created_at, updated_at } = await User.update({
     ...data,
-    password_hash: password_hash ? password_hash : user.password_hash,
+    password_hash: password_hash || user.password_hash,
   });
 
   return res.json({
@@ -151,7 +153,7 @@ const disable = async (req, res) => {
     return res.json({
       error: 400,
       data: {
-        message: "You user account is already disabled.",
+        message: 'You user account is already disabled.',
       },
     });
   }
@@ -161,15 +163,15 @@ const disable = async (req, res) => {
   return res.json({
     error: null,
     data: {
-      message: "Your user account is now disabled.",
+      message: 'Your user account is now disabled.',
     },
   });
 };
 
 const upload = async (req, res) => {
   const { file = null, auth_user_id: user_id } = req;
-  
-  const picture = await User.upload({ url: process.env.UPLOAD_STORAGE === "diskstorage" ? file.filename : file.location, user_id });
+
+  const picture = await User.upload({ url: process.env.UPLOAD_STORAGE === 'diskstorage' ? file.filename : file.location, user_id });
 
   if (!picture || picture.error) {
     return res.json(picture);
@@ -183,4 +185,6 @@ const upload = async (req, res) => {
   });
 };
 
-module.exports = { create, getUserProfile, getProfile, update, disable, upload };
+module.exports = {
+  create, getUserProfile, getProfile, update, disable, upload,
+};

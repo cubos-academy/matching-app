@@ -1,18 +1,18 @@
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken');
 
 const checkAuthorization = async (req, res, next) => {
-  const authorization = req.headers.authorization;
+  const { authorization } = req.headers;
 
   if (!authorization) {
     return res.status(401).json({
       error: 401,
       data: {
-        message: "Unauthorized",
+        message: 'Unauthorized',
       },
     });
   }
 
-  const [bearer, token] = authorization.split(" ");
+  const [bearer, token] = authorization.split(' ');
   try {
     const verification = await jwt.verify(token, process.env.JWT_SECRET);
     req.auth_user_id = verification.id;
@@ -20,7 +20,7 @@ const checkAuthorization = async (req, res, next) => {
     res.status(401).json({
       error: 401,
       data: {
-        message: "Unauthorized",
+        message: 'Unauthorized',
       },
     });
   }

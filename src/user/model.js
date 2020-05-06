@@ -1,14 +1,16 @@
-const Pool = require("../utils/db");
+const Pool = require('../utils/db');
 
 const DEFAULT_ERR_RESPONSE = {
   error: 503,
   data: {
-    message: "Internal Error",
+    message: 'Internal Error',
   },
 };
 
 const store = async (user) => {
-  const { name, username, email, password_hash, phone } = user;
+  const {
+    name, username, email, password_hash, phone,
+  } = user;
 
   const userExists = await getOneByEmail(email);
 
@@ -17,8 +19,8 @@ const store = async (user) => {
       const {
         rows,
       } = await Pool.query(
-        "INSERT INTO users (name, username, email, password_hash, phone) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-        [name, username, email, password_hash, phone]
+        'INSERT INTO users (name, username, email, password_hash, phone) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+        [name, username, email, password_hash, phone],
       );
 
       if (!rows.length) {
@@ -34,7 +36,7 @@ const store = async (user) => {
   return {
     error: 409,
     data: {
-      message: "There is already an user with this email",
+      message: 'There is already an user with this email',
     },
   };
 };
@@ -44,8 +46,8 @@ const getOneByEmail = async (email) => {
     const {
       rows,
     } = await Pool.query(
-      "SELECT id, email, password_hash FROM users WHERE email = $1 AND deleted_at IS NULL",
-      [email]
+      'SELECT id, email, password_hash FROM users WHERE email = $1 AND deleted_at IS NULL',
+      [email],
     );
 
     if (!rows.length) {
@@ -60,7 +62,7 @@ const getOneByEmail = async (email) => {
 
 const getOne = async (id) => {
   try {
-    const { rows } = await Pool.query("SELECT * FROM users WHERE id = $1", [
+    const { rows } = await Pool.query('SELECT * FROM users WHERE id = $1', [
       id,
     ]);
 
@@ -68,19 +70,21 @@ const getOne = async (id) => {
   } catch (err) {
     return {
       error: 503,
-      message: "Internal Error",
+      message: 'Internal Error',
     };
   }
 };
 
 const update = async (user) => {
-  const { id, email, password_hash, username, phone, name } = user;
+  const {
+    id, email, password_hash, username, phone, name,
+  } = user;
   try {
     const {
       rows,
     } = await Pool.query(
-      "UPDATE users SET email = $1, password_hash = $2, username = $3, phone = $4, name = $5, updated_at = NOW() WHERE id = $6 RETURNING *",
-      [email, password_hash, username, phone, name, id]
+      'UPDATE users SET email = $1, password_hash = $2, username = $3, phone = $4, name = $5, updated_at = NOW() WHERE id = $6 RETURNING *',
+      [email, password_hash, username, phone, name, id],
     );
 
     return rows.shift();
@@ -89,16 +93,15 @@ const update = async (user) => {
   }
 };
 
-const getAll = () => {
-  
-};
+const getAll = () => {};
 
 const disable = async (id) => {
   try {
     const {
       rows,
     } = await Pool.query(
-      "UPDATE users SET deleted_at = NOW() where id = $1", [id]
+      'UPDATE users SET deleted_at = NOW() where id = $1',
+      [id],
     );
 
     return rows.shift();
@@ -112,12 +115,21 @@ const upload = async ({ user_id, url }) => {
     const {
       rows,
     } = await Pool.query(
-      "INSERT INTO users_pictures (user_id, url) VALUES ($1, $2) RETURNING url;", [user_id, url]
+      'INSERT INTO users_pictures (user_id, url) VALUES ($1, $2) RETURNING url;',
+      [user_id, url],
     );
 
     return rows.shift();
   } catch (err) {
     return DEFAULT_ERR_RESPONSE;
   }
-}
-module.exports = { store, getOne, getOneByEmail, getAll, disable, update, upload };
+};
+module.exports = {
+  store,
+  getOne,
+  getOneByEmail,
+  getAll,
+  disable,
+  update,
+  upload,
+};
