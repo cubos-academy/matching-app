@@ -47,6 +47,6 @@ routes.put(
 	User.disable,
 );
 
-routes.post('/users/upload', checkAuthorization, Uploader, User.upload);
+routes.post('/users/me/upload', checkAuthorization, fileUpload, User.upload);
 
 module.exports = routes;
