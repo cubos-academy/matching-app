@@ -1,3 +1,6 @@
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable no-await-in-loop */
+
 const Pool = require('../utils/db');
 
 const DEFAULT_ERR_RESPONSE = {
@@ -5,6 +8,25 @@ const DEFAULT_ERR_RESPONSE = {
 	data: {
 		message: 'Internal Error',
 	},
+};
+
+const getOneByEmail = async (email) => {
+	try {
+		const {
+			rows,
+		} = await Pool.query(
+			'SELECT id, email, password_hash FROM users WHERE email = $1 AND deleted_at IS NULL',
+			[email],
+		);
+
+		if (!rows.length) {
+			return null;
+		}
+
+		return rows.shift();
+	} catch (err) {
+		return DEFAULT_ERR_RESPONSE;
+	}
 };
 
 const store = async (user) => {
@@ -37,25 +59,6 @@ const store = async (user) => {
 			message: 'There is already an user with this email',
 		},
 	};
-};
-
-const getOneByEmail = async (email) => {
-	try {
-		const {
-			rows,
-		} = await Pool.query(
-			'SELECT id, email, password_hash FROM users WHERE email = $1 AND deleted_at IS NULL',
-			[email],
-		);
-
-		if (!rows.length) {
-			return null;
-		}
-
-		return rows.shift();
-	} catch (err) {
-		return DEFAULT_ERR_RESPONSE;
-	}
 };
 
 const getOne = async (id) => {
@@ -176,28 +179,55 @@ const upload = async ({ user_id, url }) => {
 	}
 };
 
-const getRecommendations = async ({ min_age, max_age }) => {
+const getUserPictures = async (user_id) => {
 	try {
 		const { rows } = await Pool.query(
 			`
-			WITH tab_of_dates AS (
-				select name, (extract (year from age(now(), birth))::integer) as age from users
-			)
 			SELECT
-				tab_of_dates.*,
-				array_agg(photos.url) photos,
-			FROM tab_of_dates
-			LEFT JOIN users_pictures photos
-				ON users.id = photos.user_id;
+				array_remove(array_agg(url), NULL) photos
+			FROM
+				users_pictures
 			WHERE
-				tab_of_ages.ages > $1 AND
-				tab_of_ages.ages < $2
+				user_id = $1 AND
+				deleted_at IS NULL
 			;
-		`,
-			[min_age, max_age],
+			`,
+			[user_id],
 		);
 
-		return rows;
+		return rows.shift().photos;
+	} catch (err) {
+		return DEFAULT_ERR_RESPONSE;
+	}
+};
+
+const getRecommendations = async ({ user_id, min_age, max_age }) => {
+	try {
+		const { rows: users } = await Pool.query(
+			`
+			SELECT * FROM (
+				SELECT *, (EXTRACT (YEAR FROM age(NOW(), birthdate))) AS age FROM users
+			) as users
+			WHERE
+				users.age > $1 AND
+				users.age < $2 AND
+				users.id <> $3
+			LIMIT 50
+			;
+		`,
+			[min_age, max_age, user_id],
+		);
+
+		const users_with_pictures = [];
+		for (const user of users) {
+			const photos = await getUserPictures(user.id);
+			users_with_pictures.push({
+				...user,
+				photos,
+			});
+		}
+
+		return { error: null, data: users_with_pictures };
 	} catch (err) {
 		return DEFAULT_ERR_RESPONSE;
 	}

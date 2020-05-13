@@ -260,6 +260,7 @@ const recommendations = async (req, res) => {
 	const user_recommendations = await User.getRecommendations({
 		min_age,
 		max_age,
+		user_id: auth_user_id,
 	});
 
 	if (!user_recommendations || user_recommendations.error) {
