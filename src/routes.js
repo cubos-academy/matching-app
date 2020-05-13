@@ -18,22 +18,29 @@ routes.post('/auth/google', () => {});
 routes.post('/auth/google', () => {});
 
 routes.get(
-	'/users/me',
+	'/user/me',
 	checkAuthorization,
 	checkAccountStatus,
 	User.getUserProfile,
 );
 
 routes.get(
-	'/users/:id',
+	'/user/recommendations',
+	checkAuthorization,
+	checkAccountStatus,
+	User.recommendations,
+);
+
+routes.get(
+	'/user/:id',
 	checkAuthorization,
 	checkAccountStatus,
 	User.getProfile,
 );
 
-routes.post('/users/', encryptPassword, User.create);
+routes.post('/user/', encryptPassword, User.create);
 routes.put(
-	'/users/me',
+	'/user/me',
 	checkAuthorization,
 	checkAccountStatus,
 	encryptPassword,
@@ -41,12 +48,19 @@ routes.put(
 );
 
 routes.put(
-	'/users/me/disable',
+	'/users/me/profile',
+	checkAuthorization,
+	checkAccountStatus,
+	User.updateProfile,
+);
+
+routes.put(
+	'/user/me/disable',
 	checkAuthorization,
 	checkAccountStatus,
 	User.disable,
 );
 
-routes.post('/users/me/upload', checkAuthorization, fileUpload, User.upload);
+routes.post('/user/me/upload', checkAuthorization, fileUpload, User.upload);
 
 module.exports = routes;
