@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/cubos-academy/matching-app#readme",
   "dependencies": {
+    "@sentry/node": "^5.15.5",
     "aws-sdk": "^2.665.0",
     "bcryptjs": "^2.4.3",
     "dotenv": "^8.2.0",
