@@ -14,10 +14,10 @@ const index = async (req, res) => {
 const dismatch = async (req, res) => {
 	const {
 		auth_user_id,
-		body: { match_id },
+		params: { match_id },
 	} = req;
 
-	const match = await Match.getMatch(auth_user_id, match_id);
+	const match = await Match.getLike(auth_user_id, match_id);
 
 	if (!match) {
 		return res.json({
@@ -38,20 +38,48 @@ const dismatch = async (req, res) => {
 	});
 };
 
-const match = async (req, res) => {
+const like = async (req, res) => {
 	const {
 		auth_user_id,
-		body: { match_id },
+		params: { match_id },
 	} = req;
 
-	const response = await Match.getMatch(auth_user_id, match_id);
+	const match_like = await Match.getLike(auth_user_id, match_id);
 
-	const newly_match = await Match.match(response.id);
+	await Match.like(
+		auth_user_id,
+		match_id,
+		match_like ? match_like.id : undefined,
+	);
 
 	return res.json({
 		error: null,
-		data: newly_match.data,
+		data: {
+			message: `You have liked with user of id ${match_id}`,
+		},
 	});
 };
 
-module.exports = { dismatch, index, match };
+const pass = async (req, res) => {
+	const {
+		auth_user_id,
+		params: { match_id },
+	} = req;
+
+	const match_like = await Match.getLike(auth_user_id, match_id);
+
+	await Match.pass(
+		auth_user_id,
+		match_id,
+		match_like ? match_like.id : undefined,
+	);
+
+	return res.json({
+		error: null,
+		data: {
+			message: `You have passed the user of id ${match_id}`,
+		},
+	});
+};
+
+module.exports = { dismatch, index, like, pass };
