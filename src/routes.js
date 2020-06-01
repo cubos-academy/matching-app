@@ -7,6 +7,8 @@ const { checkAccountStatus, encryptPassword } = require('./user/middleware');
 const Session = require('./session/controller');
 const { checkAuthorization } = require('./session/middleware');
 
+const Match = require('./match/controller');
+
 const routes = Router();
 
 routes.get('/hello', (req, res) => {
@@ -62,5 +64,11 @@ routes.put(
 );
 
 routes.post('/user/me/upload', checkAuthorization, fileUpload, User.upload);
+
+routes.get('/matches/', checkAuthorization, Match.index);
+
+routes.post('/matches', checkAuthorization, Match.match);
+
+routes.delete('/matches/', checkAuthorization, Match.dismatch);
 
 module.exports = routes;
