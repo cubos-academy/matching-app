@@ -208,15 +208,15 @@ const getRecommendations = async ({ user_id, min_age, max_age }) => {
 			SELECT * FROM (
 				SELECT *, (EXTRACT (YEAR FROM age(NOW(), birthdate))) AS age FROM users
 			) as users
+			LEFT JOIN users_matches ON ((users.id = users_matches.user_id) OR (users.id = users_matches.match_id))
 			WHERE
-				users.age > $1 AND
-				users.age < $2 AND
-				users.id <> $3
-				deleted_at IS NOT NULL
+				users.id <> $1 AND
+				users.deleted_at IS NULL AND
+				users_matches.deleted_at IS NULL
 			LIMIT 50
 			;
 		`,
-			[min_age, max_age, user_id],
+			[user_id],
 		);
 
 		const users_with_pictures = [];
