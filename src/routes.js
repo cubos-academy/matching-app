@@ -65,10 +65,11 @@ routes.put(
 
 routes.post('/user/me/upload', checkAuthorization, fileUpload, User.upload);
 
-routes.get('/matches/', checkAuthorization, Match.index);
+routes.get('/match/', checkAuthorization, Match.index);
 
-routes.post('/matches', checkAuthorization, Match.match);
+routes.post('/match/like/:match_id', checkAuthorization, Match.like);
+routes.post('/match/pass/:match_id', checkAuthorization, Match.pass);
 
-routes.delete('/matches/', checkAuthorization, Match.dismatch);
+routes.delete('/match/:match_id', checkAuthorization, Match.dismatch);
 
 module.exports = routes;
