@@ -212,6 +212,7 @@ const getRecommendations = async ({ user_id, min_age, max_age }) => {
 				users.age > $1 AND
 				users.age < $2 AND
 				users.id <> $3
+				deleted_at IS NOT NULL
 			LIMIT 50
 			;
 		`,
