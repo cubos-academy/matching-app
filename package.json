@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node -r dotenv/config server.js",
+    "lint": "eslint --config=./.eslintrc.js --ext .js ./",
     "migrate": "DATABASE_URL=postgres://postgres:mypw@localhost/postgres node-pg-migrate",
     "migrate:windows": "SET DATABASE_URL=postgres://postgres:mypw@localhost/postgres&& node-pg-migrate"
   },
