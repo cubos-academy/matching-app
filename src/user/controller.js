@@ -7,9 +7,17 @@ const create = async (req, res) => {
 		password_hash = null,
 		email = null,
 		phone = null,
+		birthdate = null,
 	} = req.body;
 
-	if (!name || !username || !password_hash || !email || !phone) {
+	if (
+		!name ||
+		!username ||
+		!password_hash ||
+		!email ||
+		!phone ||
+		!birthdate
+	) {
 		return res.status(400).json({
 			error: 400,
 			data: {
@@ -23,6 +31,7 @@ const create = async (req, res) => {
 		username,
 		email,
 		phone,
+		birthdate,
 		password_hash,
 	};
 
@@ -143,6 +152,48 @@ const update = async (req, res) => {
 	});
 };
 
+const updateProfile = async (req, res) => {
+	const {
+		auth_user_id,
+		body: {
+			name,
+			birthdate,
+			lives_in,
+			latitude,
+			longitude,
+			school,
+			work,
+			show_location,
+		},
+	} = req;
+
+	const user = await User.getOne(auth_user_id);
+
+	const data = {
+		id: auth_user_id,
+		birthdate: birthdate || user.birthdate,
+		lives_in: lives_in || user.lives_in,
+		latitude: latitude || user.latitude,
+		longitude: longitude || user.longitude,
+		school: school || user.school,
+		work: work || user.work,
+		show_location: show_location || user.show_location,
+		name: name || user.name,
+	};
+
+	const { deleted_at, created_at, updated_at } = await User.update(data);
+
+	return res.json({
+		error: null,
+		data: {
+			...data,
+			deleted_at,
+			created_at,
+			updated_at,
+		},
+	});
+};
+
 const confirm = async () => {};
 
 const disable = async (req, res) => {
@@ -192,12 +243,44 @@ const upload = async (req, res) => {
 	});
 };
 
+const recommendations = async (req, res) => {
+	const { auth_user_id } = req;
+
+	const { deleted_at, min_age, max_age } = await User.getOne(auth_user_id);
+
+	if (deleted_at) {
+		return res.json({
+			error: 400,
+			data: {
+				message: 'You user account is already disabled.',
+			},
+		});
+	}
+
+	const user_recommendations = await User.getRecommendations({
+		min_age,
+		max_age,
+		user_id: auth_user_id,
+	});
+
+	if (!user_recommendations || user_recommendations.error) {
+		return res.json(user_recommendations);
+	}
+
+	return res.json({
+		error: null,
+		data: user_recommendations.data,
+	});
+};
+
 module.exports = {
 	create,
 	confirm,
-	getUserProfile,
 	getProfile,
+	getUserProfile,
+	recommendations,
 	update,
+	updateProfile,
 	disable,
 	upload,
 };

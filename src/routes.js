@@ -7,6 +7,8 @@ const { checkAccountStatus, encryptPassword } = require('./user/middleware');
 const Session = require('./session/controller');
 const { checkAuthorization } = require('./session/middleware');
 
+const Match = require('./match/controller');
+
 const routes = Router();
 
 routes.get('/hello', (req, res) => {
@@ -18,22 +20,29 @@ routes.post('/auth/google', () => {});
 routes.post('/auth/google', () => {});
 
 routes.get(
-	'/users/me',
+	'/user/me',
 	checkAuthorization,
 	checkAccountStatus,
 	User.getUserProfile,
 );
 
 routes.get(
-	'/users/:id',
+	'/user/recommendations',
+	checkAuthorization,
+	checkAccountStatus,
+	User.recommendations,
+);
+
+routes.get(
+	'/user/:id',
 	checkAuthorization,
 	checkAccountStatus,
 	User.getProfile,
 );
 
-routes.post('/users/', encryptPassword, User.create);
+routes.post('/user/', encryptPassword, User.create);
 routes.put(
-	'/users/me',
+	'/user/me',
 	checkAuthorization,
 	checkAccountStatus,
 	encryptPassword,
@@ -41,12 +50,26 @@ routes.put(
 );
 
 routes.put(
-	'/users/me/disable',
+	'/users/me/profile',
+	checkAuthorization,
+	checkAccountStatus,
+	User.updateProfile,
+);
+
+routes.put(
+	'/user/me/disable',
 	checkAuthorization,
 	checkAccountStatus,
 	User.disable,
 );
 
-routes.post('/users/me/upload', checkAuthorization, fileUpload, User.upload);
+routes.post('/user/me/upload', checkAuthorization, fileUpload, User.upload);
+
+routes.get('/match/', checkAuthorization, Match.index);
+
+routes.post('/match/like/:match_id', checkAuthorization, Match.like);
+routes.post('/match/pass/:match_id', checkAuthorization, Match.pass);
+
+routes.delete('/match/:match_id', checkAuthorization, Match.dismatch);
 
 module.exports = routes;

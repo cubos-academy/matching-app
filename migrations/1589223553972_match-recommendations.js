@@ -4,7 +4,7 @@ exports.shorthands = undefined;
 
 exports.up = (pgm) => {
 	pgm.createTable(
-		'users_pictures',
+		'users_matches',
 		{
 			id: {
 				type: 'UUID',
@@ -12,7 +12,7 @@ exports.up = (pgm) => {
 				default: pgm.func('uuid_generate_v4()'),
 			},
 			user_id: { type: 'UUID', notNull: true },
-			url: { type: 'TEXT', notNull: true },
+			match_id: { type: 'UUID', notNull: true },
 			created_at: { type: 'TIMESTAMP', default: pgm.func('NOW()') },
 			deleted_at: { type: 'TIMESTAMP', default: null },
 		},
@@ -21,5 +21,5 @@ exports.up = (pgm) => {
 };
 
 exports.down = (pgm) => {
-	pgm.dropTable('users_pictures', { ifExists: true, cascade: true });
+	pgm.dropTable('users_matches', { ifExists: true, cascade: true });
 };
