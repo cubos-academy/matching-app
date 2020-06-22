@@ -9,6 +9,8 @@ const { checkAuthorization } = require('./session/middleware');
 
 const Match = require('./match/controller');
 
+const Chat = require('./chat/controller');
+
 const routes = Router();
 
 routes.get('/hello', (req, res) => {
@@ -71,5 +73,7 @@ routes.post('/match/like/:match_id', checkAuthorization, Match.like);
 routes.post('/match/pass/:match_id', checkAuthorization, Match.pass);
 
 routes.delete('/match/:match_id', checkAuthorization, Match.dismatch);
+
+routes.get('/match/chat', Chat.Interface);
 
 module.exports = routes;

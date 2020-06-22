@@ -24,10 +24,15 @@ const auth = async (req, res) => {
 		);
 
 		if (doesPasswordMatch) {
-			const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-				expiresIn: process.env.JWT_EXPIRE_TIME,
-			});
+			const token = jwt.sign(
+				{ id: user.id, name: user.name },
+				process.env.JWT_SECRET,
+				{
+					expiresIn: process.env.JWT_EXPIRE_TIME,
+				},
+			);
 
+			console.log(user);
 			return res.json({
 				email,
 				username: user.username,

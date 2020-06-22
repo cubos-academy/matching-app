@@ -1,9 +1,15 @@
 const express = require('express');
 const Sentry = require('@sentry/node');
-const routes = require('./src/routes');
-const sentryConf = require('./src/utils/sentry');
+const http = require('http');
 
 const server = express();
+const app = http.createServer(server);
+const io = require('socket.io')(app);
+
+require('./src/chat')(io);
+
+const routes = require('./src/routes');
+const sentryConf = require('./src/utils/sentry');
 
 Sentry.init(sentryConf);
 
@@ -12,4 +18,4 @@ server.use(express.json());
 server.use(routes);
 server.use(Sentry.Handlers.errorHandler());
 
-server.listen(process.env.PORT);
+app.listen(process.env.PORT);

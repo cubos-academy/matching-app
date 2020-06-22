@@ -15,7 +15,7 @@ const getOneByEmail = async (email) => {
 		const {
 			rows,
 		} = await Pool.query(
-			'SELECT id, email, password_hash FROM users WHERE email = $1 AND deleted_at IS NULL',
+			'SELECT id, email, name, username, password_hash FROM users WHERE email = $1 AND deleted_at IS NULL',
 			[email],
 		);
 
